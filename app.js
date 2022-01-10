@@ -2,8 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
+const encrypt = require('mongoose-encryption');
 
 const app = express();
+
+const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -15,6 +18,9 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
 });
+
+const secret = 'This is a secret';
+userSchema.plugin(encrypt, { secret: secret, encryptedFields: ['password'] });
 
 const User = new mongoose.model('User', userSchema);
 
@@ -63,6 +69,6 @@ app
     });
   });
 
-app.listen(3000, () => {
-  console.log('Listening on port 3000');
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });
